@@ -1,0 +1,131 @@
+import java.util.*;
+
+class Recipe {
+    String name, category, region;
+    List<String> ingredients;
+    String instructions;
+
+    public Recipe(String name, String category, String region, List<String> ingredients, String instructions) {
+        this.name = name;
+        this.category = category;
+        this.region = region;
+        this.ingredients = ingredients;
+        this.instructions = instructions;
+    }
+
+    public int matchingIngredientsCount(Set<String> userIngredients) {
+        int count = 0;
+        for (String ingredient : ingredients) {
+            if (userIngredients.contains(ingredient)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public boolean containsAtLeastOneUserIngredient(Set<String> userIngredients) {
+        for (String ingredient : ingredients) {
+            if (userIngredients.contains(ingredient)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void displayRecipe() {
+        System.out.println("\n🍽 Recipe: " + name);
+        System.out.println("Category: " + category);
+        System.out.println("Region: " + region);
+        System.out.println("🔹 Ingredients: " + String.join(", ", ingredients));
+        System.out.println("📌 How to make:\n" + instructions);
+        System.out.println("-------------------------------------------------");
+    }
+}
+import java.util.*;
+
+public class IndianFoodSuggester {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("👋 Welcome to the Indian Food Suggester!");
+
+        // ✅cuisine type
+        System.out.println("👉 What type of cuisine do you prefer? (North Indian/South Indian/Eastern/Western)");
+        String regionPreference = scanner.nextLine().trim().toLowerCase();
+
+        // ✅meal type
+        System.out.println("🍽 Do you want to make a Full Meal, Tiffin, or Dessert?");
+        String mealType = scanner.nextLine().trim().toLowerCase();
+
+        // ✅ Ask for available ingredients
+        System.out.println("🍳 Enter the ingredients you have (separated by commas):");
+        Set<String> userIngredients = new HashSet<>(Arrays.asList(scanner.nextLine().toLowerCase().trim().split(",\\s*")));
+
+        // ✅recipes
+        List<Recipe> recipes = new ArrayList<>();
+        recipes.add(new Recipe("Paneer Butter Masala", "Full Meal", "north indian",
+                Arrays.asList("paneer", "butter", "tomato", "cream", "spices"),
+                "1. Blend tomatoes into a puree. 2. Sauté with butter & spices. 3. Add paneer & cook for 5 mins. 4. Garnish with cream."));
+        recipes.add(new Recipe("Chole Bhature", "Full Meal", "north indian",
+                Arrays.asList("chickpeas", "flour", "spices", "yogurt"),
+                "1. Boil chickpeas. 2. Prepare spicy chole masala. 3. Knead dough for bhature & deep-fry. 4. Serve hot."));
+        recipes.add(new Recipe("Masala Dosa", "Tiffin", "south indian",
+                Arrays.asList("rice", "urad dal", "potato", "spices"),
+                "1. Prepare dosa batter. 2. Make potato masala. 3. Spread dosa on a hot pan & fill with masala. 4. Serve with chutney."));
+        recipes.add(new Recipe("Idli", "Tiffin", "south indian",
+                Arrays.asList("rice", "urad dal", "salt"),
+                "1. Soak rice & dal overnight. 2. Grind into a smooth batter. 3. Ferment for 8 hours. 4. Steam in idli molds."));
+        recipes.add(new Recipe("Rasgulla", "Dessert", "eastern",
+                Arrays.asList("milk", "sugar", "lemon juice"),
+                "1. Curdle milk & strain to make chhena. 2. Knead into balls. 3. Boil in sugar syrup. 4. Serve chilled."));
+        recipes.add(new Recipe("Mishti Doi", "Dessert", "eastern",
+                Arrays.asList("milk", "jaggery", "curd"),
+                "1. Boil milk & mix with jaggery. 2. Add curd & let it ferment. 3. Chill & serve."));
+        recipes.add(new Recipe("Pav Bhaji", "Full Meal", "western",
+                Arrays.asList("potato", "tomato", "butter", "spices", "pav"),
+                "1. Boil & mash vegetables. 2. Cook with butter & spices. 3. Toast pav with butter. 4. Serve hot."));
+        recipes.add(new Recipe("Chicken Biryani", "Full Meal", "north indian",
+                Arrays.asList("chicken", "rice", "spices", "yogurt", "onion"),
+                "1. Marinate chicken with spices & yogurt. 2. Cook rice separately. 3. Layer chicken & rice, then cook together. 4. Serve hot."));
+        recipes.add(new Recipe("Egg Fried Rice", "Tiffin", "chinese",
+                Arrays.asList("rice", "egg", "soy sauce", "onion"),
+                "1. Scramble eggs in a pan. 2. Add cooked rice, soy sauce & onions. 3. Stir fry until well mixed. 4. Serve hot."));
+
+        // ✅ Filter relevant recipes
+        List<Recipe> matchingRecipes = new ArrayList<>();
+        for (Recipe recipe : recipes) {
+            if (recipe.region.equalsIgnoreCase(regionPreference) &&
+                    recipe.category.equalsIgnoreCase(mealType) &&
+                    recipe.containsAtLeastOneUserIngredient(userIngredients)) {
+                matchingRecipes.add(recipe);
+            }
+        }
+
+        // ✅ Sort by the number of matching ingredients
+        matchingRecipes.sort((r1, r2) -> Integer.compare(r2.matchingIngredientsCount(userIngredients), r1.matchingIngredientsCount(userIngredients)));
+
+        System.out.println("\n✅ Based on your preferences, here are some dishes you can make:");
+
+        int count = 0;
+        for (Recipe recipe : matchingRecipes) {
+            recipe.displayRecipe();
+            count++;
+            if (count == 5) break; // Max 5 recipes
+        }
+
+        // ✅ If no perfect match, suggest the closest alternative
+        if (count == 0) {
+            System.out.println("❌ No exact match found. Suggesting a related recipe:");
+            for (Recipe recipe : recipes) {
+                if (recipe.containsAtLeastOneUserIngredient(userIngredients)) {
+                    recipe.displayRecipe();
+                    break; // Suggest only one related recipe
+                }
+            }
+        }
+
+        System.out.println("\n🍽 Enjoy your meal! 🎉");
+        scanner.close();
+    }
+}
+
