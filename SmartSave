@@ -1,0 +1,133 @@
+class User {
+    private String name;
+    private String upiId;
+    private String bankAccount;
+    private double monthlyContribution;
+    private boolean isAutoSave;
+
+    public User(String name, String upiId, String bankAccount, double monthlyContribution, boolean isAutoSave) {
+        this.name = name;
+        this.upiId = upiId;
+        this.bankAccount = bankAccount;
+        this.monthlyContribution = monthlyContribution;
+        this.isAutoSave = isAutoSave;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getContribution() {
+        return monthlyContribution;
+    }
+
+    public boolean isAutoSaveEnabled() {
+        return isAutoSave;
+    }
+
+    public String getPaymentDetails() {
+        return upiId.isEmpty() ? "Bank: " + bankAccount : "UPI: " + upiId;
+    }
+}
+
+import java.util.ArrayList;
+import java.util.List;
+
+class SavingsGroup {
+    private String goal;
+    private double targetAmount;
+    private int durationMonths;
+    double totalSaved = 0;
+    List<User> members = new ArrayList<>();
+
+    public SavingsGroup(String goal, double targetAmount, int durationMonths) {
+        this.goal = goal;
+        this.targetAmount = targetAmount;
+        this.durationMonths = durationMonths;
+    }
+
+    public void addMember(User user) {
+        members.add(user);
+    }
+
+    public void collectMonthlySavings() {
+        for (User user : members) {
+            if (user.isAutoSaveEnabled()) {
+                totalSaved += user.getContribution();
+                System.out.println(user.getName() + " - ₹" + user.getContribution() + " Auto-Saved from " + user.getPaymentDetails());
+            } else {
+                System.out.println(user.getName() + " - Manual Payment Required: ₹" + user.getContribution());
+            }
+        }
+        System.out.println("Total Saved So Far: ₹" + totalSaved + " / ₹" + targetAmount);
+    }
+
+    public boolean isGoalReached() {
+        return totalSaved >= targetAmount;
+    }
+}
+
+class NotificationService {
+    public static void sendReminder(User user) {
+        System.out.println("Reminder: " + user.getName() + ", please contribute ₹" + user.getContribution() + " for your savings goal.");
+    }
+}
+public class SaveSmartApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // 1. Create a Savings Goal
+        System.out.print("Enter your savings goal (e.g., Bike, Laptop, Travel): ");
+        String goal = scanner.nextLine();
+        System.out.print("Enter target amount (₹): ");
+        double targetAmount = scanner.nextDouble();
+        System.out.print("Enter duration (months): ");
+        int duration = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        SavingsGroup group = new SavingsGroup(goal, targetAmount, duration);
+
+        // 2. Add Users
+        System.out.print("How many people will contribute? ");
+        int numUsers = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        for (int i = 0; i < numUsers; i++) {
+            System.out.print("\nEnter name for User " + (i + 1) + ": ");
+            String name = scanner.nextLine();
+            System.out.print("Enter UPI ID (leave empty if using bank account): ");
+            String upiId = scanner.nextLine();
+            System.out.print("Enter Bank Account (leave empty if using UPI): ");
+            String bankAccount = scanner.nextLine();
+            System.out.print("Enter Monthly Contribution (₹): ");
+            double contribution = scanner.nextDouble();
+            System.out.print("Enable Auto-Savings? (true/false): ");
+            boolean isAutoSave = scanner.nextBoolean();
+            scanner.nextLine(); // Consume newline
+
+            User user = new User(name, upiId, bankAccount, contribution, isAutoSave);
+            group.addMember(user);
+        }
+
+        // 3. Monthly Savings Collection
+        System.out.println("\n--- Monthly Savings Collection ---");
+        group.collectMonthlySavings();
+
+        // 4. Sending Notifications for Manual Contributors
+        System.out.println("\n--- Sending Payment Reminders ---");
+        for (User user : group.members) {
+            if (!user.isAutoSaveEnabled()) {
+                NotificationService.sendReminder(user);
+            }
+        }
+
+        // 5. Goal Status
+        if (group.isGoalReached()) {
+            System.out.println("\nCongratulations! The savings goal for " + goal + " has been reached.");
+        } else {
+            System.out.println("\nKeep saving! You still need ₹" + (targetAmount - group.totalSaved) + " to reach your goal.");
+        }
+
+        scanner.close();
+    }
+}
