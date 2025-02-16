@@ -1,0 +1,120 @@
+import java.util.*;
+
+class SkinTypeIdentifier {
+    public static String determineSkinType(Scanner sc) {
+        System.out.println("🧑‍⚕️ Hello Sir! Welcome to UV Men Guard.");
+        System.out.println("Many men are unsure about their skin type. Let’s figure it out together!");
+        System.out.println("I will ask you some simple questions. Please answer honestly.");
+
+        int oilyCount = 0, dryCount = 0, combinationCount = 0, normalCount = 0;
+
+        System.out.println("\n1️⃣ After washing your face with just water, how does your skin feel after 30 minutes?");
+        System.out.println("   a) Tight, flaky, or rough\n   b) Balanced, neither dry nor oily\n   c) Greasy and shiny\n   d) Dry in some areas, oily in others");
+        char ans = sc.next().toLowerCase().charAt(0);
+        if (ans == 'a') dryCount++;
+        else if (ans == 'b') normalCount++;
+        else if (ans == 'c') oilyCount++;
+        else if (ans == 'd') combinationCount++;
+
+        System.out.println("\n2️⃣ How often does your skin feel oily by midday?");
+        System.out.println("   a) Never, it stays dry\n   b) Sometimes, but not too much\n   c) Almost every day, especially on my forehead/nose\n   d) My T-zone gets oily, but my cheeks stay dry");
+        ans = sc.next().toLowerCase().charAt(0);
+        if (ans == 'a') dryCount++;
+        else if (ans == 'b') normalCount++;
+        else if (ans == 'c') oilyCount++;
+        else if (ans == 'd') combinationCount++;
+
+        System.out.println("\n3️⃣ How does your skin react to new skincare products?");
+        System.out.println("   a) It gets irritated, red, or itchy\n   b) It reacts normally, no irritation\n   c) It sometimes breaks out or gets greasy\n   d) My T-zone may break out, but my cheeks feel dry");
+        ans = sc.next().toLowerCase().charAt(0);
+        if (ans == 'a') dryCount++;
+        else if (ans == 'b') normalCount++;
+        else if (ans == 'c') oilyCount++;
+        else if (ans == 'd') combinationCount++;
+
+        System.out.println("\n4️⃣ Do you get pimples or breakouts frequently?");
+        System.out.println("   a) No, my skin is always dry\n   b) Sometimes, but not too much\n   c) Yes, very often, especially on my forehead/nose\n   d) Only in some areas (T-zone), but my cheeks are dry");
+        ans = sc.next().toLowerCase().charAt(0);
+        if (ans == 'a') dryCount++;
+        else if (ans == 'b') normalCount++;
+        else if (ans == 'c') oilyCount++;
+        else if (ans == 'd') combinationCount++;
+
+        System.out.println("\n5️⃣ What happens to your skin in cold weather?");
+        System.out.println("   a) It gets extremely dry and flaky\n   b) It stays mostly the same\n   c) It still gets oily, even in winter\n   d) My cheeks get very dry, but my T-zone stays oily");
+        ans = sc.next().toLowerCase().charAt(0);
+        if (ans == 'a') dryCount++;
+        else if (ans == 'b') normalCount++;
+        else if (ans == 'c') oilyCount++;
+        else if (ans == 'd') combinationCount++;
+
+        // Determining skin type
+        if (oilyCount >= 3) return "Oily";
+        else if (dryCount >= 3) return "Dry";
+        else if (combinationCount >= 3) return "Combination";
+        else return "Normal";
+    }
+}
+
+class SunscreenRecommendation {
+    public static void recommendSunscreen(String skinType, int budget) {
+        System.out.println("\n🔍 Finding the best sunscreen for your skin type and budget...");
+        HashMap<String, List<String>> sunscreenOptions = new HashMap<>();
+
+        sunscreenOptions.put("Oily", Arrays.asList(
+                "Deconstruct Gel SPF 55 | ₹349 | Nykaa: https://www.nykaaman.com/deconstruct-gel-spf-55 | Amazon: https://www.amazon.in/dp/B09XYZ9101 | Flipkart: https://www.flipkart.com/dp/GHI789RST",
+                "Aqualogica Matte+ SPF 50 | ₹399 | Nykaa: https://www.nykaaman.com/aqualogica-matte-50 | Amazon: https://www.amazon.in/dp/B09ZXYA123 | Flipkart: https://www.flipkart.com/dp/JKL456RST"
+        ));
+
+        sunscreenOptions.put("Dry", Arrays.asList(
+                "Minimalist SPF 50 | ₹499 | Nykaa: https://www.nykaaman.com/minimalist-spf-50 | Amazon: https://www.amazon.in/dp/B08XYZ101 | Flipkart: https://www.flipkart.com/dp/MNO789RST",
+                "Dr. Sheth’s Sunscreen | ₹599 | Nykaa: https://www.nykaaman.com/dr-sheths-sunscreen | Amazon: https://www.amazon.in/dp/B07XYZ202 | Flipkart: https://www.flipkart.com/dp/PQR123RST"
+        ));
+
+        sunscreenOptions.put("Combination", Arrays.asList(
+                "Derma Co SPF 60 | ₹449 | Nykaa: https://www.nykaaman.com/derma-co-spf-60 | Amazon: https://www.amazon.in/dp/B06XYZ303 | Flipkart: https://www.flipkart.com/dp/STU456RST"
+        ));
+
+        sunscreenOptions.put("Normal", Arrays.asList(
+                "Re'equil SPF 50 | ₹550 | Nykaa: https://www.nykaaman.com/reequil-spf-50 | Amazon: https://www.amazon.in/dp/B05XYZ404 | Flipkart: https://www.flipkart.com/dp/VWX789RST"
+        ));
+
+        List<String> products = sunscreenOptions.getOrDefault(skinType, new ArrayList<>());
+        boolean found = false;
+
+        for (String product : products) {
+            String[] details = product.split("\\|");
+            int price = Integer.parseInt(details[1].replaceAll("[^0-9]", "").trim());
+
+            if (price <= budget) {
+                System.out.println("✔ " + details[0].trim());
+                System.out.println("   - Price: " + details[1].trim());
+                System.out.println("   - Available on:");
+                System.out.println("     🛒 " + details[2].trim());
+                System.out.println("     🛒 " + details[3].trim());
+                System.out.println("     🛒 " + details[4].trim());
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("❌ No sunscreens available within your budget. Consider increasing it.");
+        }
+    }
+}
+
+public class UVMenGuard {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        String skinType = SkinTypeIdentifier.determineSkinType(sc);
+        System.out.println("\n✅ Based on your answers, your skin type is: " + skinType);
+
+        System.out.println("\nEnter your budget (INR): ");
+        int budget = sc.nextInt();
+
+        SunscreenRecommendation.recommendSunscreen(skinType, budget);
+        sc.close();
+    }
+}
